@@ -8,27 +8,29 @@ A React + Motion web portal for exporting Mother Dairy, Safal and Dhara products
 npm install
 cp .env.example .env   # then set APP_USERNAME / APP_PASSWORD
 npm run dev      # http://localhost:5173
-npm run build    # production build in dist/
-npm start        # serve dist/ with the login API on PORT (default 4173), Node 22.18+
+npm run build    # static site in dist/
+npm run preview  # check the built site locally
 ```
+
+## Deploy (static site)
+
+The build is plain static files, so any static host works. On Render, create a **Static Site**:
+
+| Setting | Value |
+|---|---|
+| Build Command | `npm ci --include=dev && npm run build` |
+| Publish Directory | `dist` |
+| Environment | `APP_USERNAME`, `APP_PASSWORD`, optional `SESSION_HOURS`, and `NODE_VERSION` = `24` |
+| Redirects/Rewrites | Source `/*`, Destination `/index.html`, Action **Rewrite** (so links like `/crm` open the app) |
 
 ## Sign-in
 
-Every page except `/login` requires a sign-in. The username and password come from `.env`:
+Every page except `/login` requires a sign-in, configured with `APP_USERNAME` / `APP_PASSWORD` (and optional `SESSION_HOURS`, default 12) in `.env` or the host's build environment.
 
-| Variable | Purpose |
-|---|---|
-| `APP_USERNAME` / `APP_PASSWORD` | The portal login (username is not case-sensitive) |
-| `SESSION_SECRET` | Signs the session cookie; generate with `openssl rand -hex 32` |
-| `SESSION_HOURS` | How long a sign-in lasts (default 12) |
-| `PORT` | Port for `npm start` |
-
-- These variables have no `VITE_` prefix on purpose: they stay on the server and are never bundled into the browser JavaScript. The check runs in `server/auth.ts`, which is used by the Vite dev/preview server and by `npm start`.
-- In dev, `.env` is re-read on every request, so a new password takes effect immediately. Changing the username or password signs out existing sessions.
-- After 5 wrong attempts from one address, sign-in is locked for 15 minutes.
-- Sessions are an HttpOnly cookie (marked `Secure` behind HTTPS).
-- Serving `dist/` from a plain static host will not work, because the login API needs `npm start` or an equivalent server. On a host, you can set the same variables in its environment instead of `.env`.
-- The login gates the app UI. The demo catalogue and CRM data are still compiled into the JavaScript bundle. Live data should come from an API that checks the same session.
+- The values are read **at build time**. After changing them, restart `npm run dev` or redeploy.
+- The built app contains only a salted PBKDF2 hash of the password (see `vite.config.ts`), never the password itself. The browser hashes what is typed and compares (`src/lib/auth.ts`).
+- Changing the username or password signs out existing sessions. After 5 wrong attempts, sign-in is locked for 15 minutes in that browser.
+- With no server, this is a gate for casual visitors, not real security. Someone using the browser's dev tools can get past it, and a weak password can be guessed offline from the hash. Use a long password, and move the login and data behind a server before holding real customer data.
 
 ## Stack
 
