@@ -1,0 +1,111 @@
+@import 'tailwindcss';
+
+/* Palette taken from motherdairy.com: sky blue header, aqua/teal accents,
+   navy, coral, orange and olive used across brand banners. */
+@theme {
+  --font-sans: 'Source Sans 3', 'Source Sans Pro', ui-sans-serif, system-ui, sans-serif;
+
+  --color-md-sky: #00a2e8;
+  --color-md-sky-ink: #0077b0;
+  --color-md-sky-50: #e8f7fd;
+  --color-md-teal: #33ccaa;
+  --color-md-teal-ink: #148a70;
+  --color-md-navy: #184a7c;
+  --color-md-navy-900: #0f2f50;
+  --color-md-coral: #f66753;
+  --color-md-orange: #ee8e15;
+  --color-md-olive: #adba55;
+  --color-md-ink: #414042;
+  --color-md-cream: #fbfaf6;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-md-cream);
+  color: var(--color-md-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-md-sky) 25%, transparent);
+}
+
+@utility scrollbar-thin {
+  &::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+  }
+}
+
+@utility card {
+  @apply rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,47,80,0.04),0_8px_24px_-12px_rgba(15,47,80,0.12)];
+}
+
+@utility input {
+  @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-md-sky focus:ring-4 focus:ring-md-sky/15;
+}
+
+@utility label {
+  @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50 bg-md-sky text-white shadow-sm shadow-md-sky/30 hover:bg-md-sky-ink;
+}
+@utility btn-ghost {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+}
+
+@utility chip {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Pitch Studio prints only the proposal document */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-reset {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .print-area {
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-area * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
